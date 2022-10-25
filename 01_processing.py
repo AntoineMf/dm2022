@@ -6,7 +6,7 @@ def removingChar(to_be_removed, sentence):
         sentence = sentence.replace(c, '').replace("'"," ")
     return sentence.split()
 to_be_removed = ".,:?;\"!()"
-df=pd.read_json("../archive/yelp_academic_dataset_review.json",lines=True,nrows=100)
+df=pd.read_json("../archive/yelp_academic_dataset_review.json",lines=True,nrows=10000)
 df["text"]=df["text"].str.lower()
 df["text"]=df["text"].apply(lambda x: removingChar(to_be_removed,x))
 
@@ -28,16 +28,18 @@ for i in df["business_id"]:
         for word in wordCounting:
             wordCounting[word]=math.log(len(df_tmp.index)/wordCounting[word])
         business_id_dict[i]=wordCounting
+        count+=1
     if count ==-1 : 
         break
-    count+=1
+    
 business_review={}
 for i in business_id_dict:
     print(i)
     words_tfIdf=dict(sorted(business_id_dict[i].items(), key=lambda item: item[1],reverse=True))
-    business_review[i]=words_tfIdf
+    business_review[i]=list(words_tfIdf)[0:5]
 
 print(business_review)
+print(count)
 """
 for i in df["business_id"]:
     if i in business_id_dict:
