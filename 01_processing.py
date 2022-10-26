@@ -6,20 +6,21 @@ def removingChar(to_be_removed, sentence):
         sentence = sentence.replace(c, '').replace("'"," ")
     return sentence.split()
 to_be_removed = ".,:?;\"!()"
-df=pd.read_json("../archive/yelp_academic_dataset_review.json",lines=True,nrows=10000)
+df=pd.read_json("../archive/yelp_academic_dataset_review.json",lines=True,nrows=100000)
 df["text"]=df["text"].str.lower()
 df["text"]=df["text"].apply(lambda x: removingChar(to_be_removed,x))
 
 business_id_dict={}
 count=0
 for i in df["business_id"]:
-    print(i)
+    #print(i)
     if i in business_id_dict:
         pass
     else:
         df_tmp=df[df["business_id"]==i]
         wordCounting = {}
         for j in range(len(df_tmp.index)):
+            
             for elem in df_tmp["text"].iloc[0]:
                 if elem in wordCounting:
                     wordCounting[elem]+=1
@@ -34,12 +35,13 @@ for i in df["business_id"]:
     
 business_review={}
 for i in business_id_dict:
-    print(i)
+    #print(i)
     words_tfIdf=dict(sorted(business_id_dict[i].items(), key=lambda item: item[1],reverse=True))
-    business_review[i]=list(words_tfIdf)[0:5]
-
-print(business_review)
-print(count)
+    business_review[i]=words_tfIdf
+    print(dict((k,v) for k,v in words_tfIdf.items() if v > 0))
+#print(business_review)
+#print(business_review)
+#print(count)
 """
 for i in df["business_id"]:
     if i in business_id_dict:
