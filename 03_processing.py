@@ -3,7 +3,7 @@ import math
 import random
 
 
-def substract(value1,value2,output):
+def substract(value1,value2):
     return abs(value1-value2) 
         
 
@@ -16,14 +16,14 @@ def createCluster(nb):
 df=pd.read_json("../archive/yelp_academic_dataset_review.json",lines=True,nrows=100)
 df["length_text"]=df["text"].str.len()
 df["text"]=df["text"].astype(str)
-list_review=list(df["text"][:])
+list_review=list(df["length_text"][:])
 #print(list_review)
 #print(min(list_review,key=len))
 
-clusters=[list_review]
+clusters=list_review
 value=0
 
-
+print(clusters)
 while len(clusters)!=3:
     min=500
     min1=0
@@ -41,14 +41,16 @@ while len(clusters)!=3:
         except:
             doubleList1=False    
             tmp1=clusters[tmp1_index]
-        else:
+        finally:
             try:
                 tmp2_second_index=random.randint(0,len(clusters[tmp2_index])-1)
                 tmp2=clusters[tmp2_index][tmp2_second_index]
             except:
                 doubleList2=False
                 tmp2=clusters[tmp2_index]
-            else:
+            finally:
+                print(f"substract(tmp1,tmp2) {(tmp1,tmp2)}")
+                print(doubleList2)
                 if(substract(tmp1,tmp2) < min):
                     min=substract(tmp1,tmp2)
                     doubleList1Final=doubleList1
@@ -63,10 +65,14 @@ while len(clusters)!=3:
                     else:
                         min2=[tmp2,tmp2_index]
     if not doubleList1Final:
-        clusters[tmp1_index]=[clusters[tmp1_index]]
+        clusters[min1[1]]=[clusters[min1[1]]]
+    print(clusters[min1[1]])
+    print(clusters[min1[1]])
     clusters[min1[1]].append(min2[0])
     
     if doubleList2Final:
+        print("inside")
+        print(doubleList2Final)
         del clusters[min2[1]][min[2]]
     else:
         del clusters[min2[1]]
