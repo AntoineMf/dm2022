@@ -24,13 +24,19 @@ def average(lst):
 def compare2list(p,old_p):
     return p-old_p
 
-def k_means(stopping_value):
+def k_means(stopping_value,cluster_nb):
     df=pd.read_json("../archive/yelp_academic_dataset_review.json",lines=True,nrows=100000)
     df["length_text"]=df["text"].str.len()
     df["text"]=df["text"].astype(str)
-    list_review=list(df["length_text"][:])
-    list_review=[[],[],[],list_review]
-    p=[0,df["length_text"].quantile(0.5),750]
+    list_review_unc=list(df["length_text"][:])
+    
+    list_review=[]
+    p=[]
+    
+    for i in range(cluster_nb):
+        list_review.append([])
+        p.append(random.randint(0,5000))
+    list_review.append(list_review_unc)
     list_updated=copy.deepcopy(list_review)
     #print(list_updated)
     stopMoving=False
@@ -39,7 +45,9 @@ def k_means(stopping_value):
         counter+=1 
         for j in range(len(list_review)):
             for elem in list_review[j]:
-                tmp_list=[euclidean(p[0],elem),euclidean(p[1],elem),euclidean(p[2],elem)]
+                tmp_list=[]
+                for indx in range(len(p)):
+                    tmp_list.append(euclidean(p[indx],elem))
                 tmp_value=elem
                 list_updated[j].remove(tmp_value)
                 list_updated[tmp_list.index(min(tmp_list))].append(tmp_value)
@@ -49,7 +57,9 @@ def k_means(stopping_value):
         if counter > 1 : 
             old_p=copy.deepcopy(p)
         else:
-            old_p=[0,0,0]
+            old_p=[]
+            for t in range(len(p)):
+                old_p.append(0)
         for u in range(len(p)):
             try:
                 p[u]=average(list_review[u])
@@ -67,12 +77,10 @@ def k_means(stopping_value):
     print(f"first cluster {list_updated[0]}")
     print(f"second cluster {list_updated[1]}")
     print(f"third cluster {list_updated[2]}")
-    print(f"first point {p[0]}, number of data inside the cluster {len(list_updated[0])}")
-    print(f"second point {p[1]}, number of data inside the cluster {len(list_updated[1])}")
-    print(f"third point {p[2]}, number of data inside the cluster {len(list_updated[2])}")
+    for i in range(len(p)):
+        print(f"cluster {i} : {p[i]}, number of data inside the cluster {len(list_updated[i])}")
     print(f"Number of iteration : {counter}")
-
-k_means(0.2)
+k_means(0.2,15)
 
 
 
