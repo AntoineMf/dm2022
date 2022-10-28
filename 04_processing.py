@@ -24,7 +24,7 @@ def average(lst):
 def compare2list(p,old_p):
     return p-old_p
 
-def k_means():
+def k_means(stopping_value):
     df=pd.read_json("../archive/yelp_academic_dataset_review.json",lines=True,nrows=100000)
     df["length_text"]=df["text"].str.len()
     df["text"]=df["text"].astype(str)
@@ -60,7 +60,7 @@ def k_means():
         for h in range(len(p)):
             comparison_p.append(compare2list(p[h],old_p[h]))
 
-        if average(comparison_p) < 1 :
+        if average(comparison_p) < stopping_value :
             stopMoving=True
 
     print(list_updated)
@@ -72,7 +72,7 @@ def k_means():
     print(f"third point {p[2]}, number of data inside the cluster {len(list_updated[2])}")
     print(f"Number of iteration : {counter}")
 
-k_means()
+k_means(0.2)
 
 
 
